@@ -16,3 +16,5 @@ router
   .route("/:idMessage")
   .patch(messageControllers.editMessage)
   .delete(messageControllers.deleteMessage);
+
+module.exports = router;
