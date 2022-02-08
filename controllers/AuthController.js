@@ -4,16 +4,48 @@ const User = require("../models/User");
 
 const AuthController = {
   loginUser: async (req, res) => {
+    console.log(req.body);
     const { username, password } = req.body;
+
     if (!username || !password) {
-      res.json({ success: false, message: "sign the username or password" });
+      return res.json({
+        success: false,
+        message: "sign the username or password",
+      });
     }
     try {
-      const FoundUser = User.findOne({ username });
-      if (FoundUser)
-        res.json({ success: false, message: "please choose another name" });
-    } catch (error) {}
-    console.log(req.body);
+      const user = await User.findOne({ username });
+      if (!user) {
+        return res.json({
+          success: false,
+          message: "Incorrect user or password",
+        });
+      }
+
+      const passwordValid = await bcrypt.compare(password, user.password);
+
+      if (!passwordValid) {
+        return res.json({
+          success: false,
+          message: "Incorrect user or password",
+        });
+      }
+      const accessToken = jwt.sign(
+        { userId: user._id },
+        process.env.MY_SECRET_TOKEN,
+        {
+          expiresIn: "15d",
+        }
+      );
+      return res.status(200).json({
+        success: true,
+        message: "Congratulation!Login success ",
+        accessToken,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
   },
   registerUser: async (req, res) => {
     const { username, password, email } = req.body;
