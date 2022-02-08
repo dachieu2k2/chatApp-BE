@@ -2,10 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 
+const AuthRouter = require("./routers/AuthRouter");
+
 const connectDB = async () => {
   try {
     await mongoose.connect(
-      `mongodb+srv://${process.env.USERNAME_DB}:${process.env.PASSWORD_DB}@cluster0.occ7f.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
+      `mongodb+srv://${process.env.USERNAME_DB}:${process.env.PASSWORD_DB}@cluster0.ppm9e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
     );
     console.log(`connected DB`);
   } catch (error) {
@@ -16,10 +18,9 @@ const connectDB = async () => {
 connectDB();
 
 const app = express();
+app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("hello world");
-});
+app.use("/api/users/", AuthRouter);
 
 const PORT = process.env.PORT || 4000;
 
