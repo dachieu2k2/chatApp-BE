@@ -1,15 +1,11 @@
 const express = require("express");
-const { roomControllers } = require("../controllers")
+const { roomControllers } = require("../controllers");
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(roomControllers.getRooms);
+router.route("/").get(roomControllers.getRooms);
 
-router
-  .route("/create")
-  .post(roomControllers.createRoom);
+router.route("/create").post(roomControllers.createRoom);
 
 router
   .route("/:id")
