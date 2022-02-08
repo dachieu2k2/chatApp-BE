@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const User = require("../models/User");
 
 const AuthController = {
@@ -24,20 +25,43 @@ const AuthController = {
     }
     try {
       const FoundUser = await User.findOne({ username });
-      console.log(FoundUser);
-      if (!FoundUser) {
+      if (FoundUser) {
         return res.json({
           success: false,
           message: "please choose another name",
         });
       }
+      let hashPassword;
+      await bcrypt
+        .hash(password, parseInt(process.env.saltRounds))
+        .then((hash) => {
+          hashPassword = hash;
+        });
       const NewUser = new User({
         username,
-        password,
+        password: hashPassword,
         email,
       });
+
       await NewUser.save();
-    } catch (error) {}
+
+      //   console.log(process.env.MY_SECRET_TOKEN, NewUser._id);
+      const accessToken = jwt.sign(
+        { userId: NewUser._id },
+        process.env.MY_SECRET_TOKEN,
+        {
+          expiresIn: "15d",
+        }
+      );
+      return res.json({
+        success: true,
+        message: "Congratulation!",
+        accessToken,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
   },
 };
 
