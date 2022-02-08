@@ -14,6 +14,11 @@ const roomControllers = {
   createRoom: async (req, res) => {
     const room = new Room(req.body);
     await room.save();
+    const bind = new Bind({
+      roomId: room._id,
+      userId: req.userId,
+    });
+    await bind.save();
     res.json(room);
   },
 
