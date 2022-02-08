@@ -1,4 +1,4 @@
-const { Message } = require("../models");
+const { Message } = require('../models');
 
 const messageControllers = {
   getMessages: async (req, res) => {
@@ -13,13 +13,23 @@ const messageControllers = {
     res.json(message);
   },
 
+  editMessage: async (req, res) => {
+    const messageId = req.params.idMessage;
+    const message = await Message.findById(messageId);
+    message.content = req.body.content;
+    await message.save();
+    res.json({
+      message: 'OK',
+    });
+  },
+
   deleteMessage: async (req, res) => {
     const messageId = req.params.idMessage;
     await Message.findByIdAndDelete(messageId);
     res.json({
-      message: "OK",
-    })
-  }
-}
+      message: 'OK',
+    });
+  },
+};
 
 module.exports = messageControllers;
