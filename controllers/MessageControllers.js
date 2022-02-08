@@ -18,9 +18,7 @@ const messageControllers = {
     const message = await Message.findById(messageId);
     message.content = req.body.content;
     await message.save();
-    res.json({
-      message: 'OK',
-    });
+    res.json(message);
   },
 
   deleteMessage: async (req, res) => {

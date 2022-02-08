@@ -19,7 +19,7 @@ const roomControllers = {
 
   editRoom: async (req, res) => {
     const roomId = req.params.id;
-    const room = Room.findById(roomId);
+    const room = await Room.findById(roomId);
     room.name = req.body.name;
     await room.save();
     res.json(room);
@@ -27,7 +27,8 @@ const roomControllers = {
 
   deleteRoom: async (req, res) => {
     const roomId = req.params.id;
-    await Bind.findOneAndDelete({ roomId });
+    const userId = req.userId;
+    await Bind.findOneAndDelete({ roomId, userId });
     res.json({
       message: "OK",
     })
