@@ -5,7 +5,7 @@ const roomControllers = {
     const userId = req.userId;
     const roomIds = await Bind.find({ userId }, 'roomId');
     const rooms = roomIds.map(async (roomId) => {
-      const room = await Room.findById({ _id: roomId });
+      const room = await Room.findById(roomId);
       return room;
     });
     res.json(await Promise.all(rooms));

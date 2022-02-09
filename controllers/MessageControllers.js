@@ -8,7 +8,10 @@ const messageControllers = {
   },
 
   createMessage: async (req, res) => {
-    const message = new Message(req.body);
+    const message = new Message({
+      ...req.body,
+      userId: req.userId,
+    });
     await message.save();
     res.json(message);
   },
