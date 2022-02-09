@@ -3,6 +3,15 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 
 const AuthController = {
+  getUser: async (req, res) => {
+    const userId = req.userId;
+    const user = await User.findById(userId).select('-password');
+    res.json({
+      success: true,
+      info: user
+    })
+  },
+
   refresh: async (req, res) => {
     const refreshToken = req.body.token;
     const userId = req.userId;
