@@ -3,6 +3,25 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 
 const AuthController = {
+  refresh: async (req, res) => {
+    const refreshToken = req.body.token;
+    const userId = req.userId;
+    const user = await User.findById(userId);
+    if (user.refreshToken !== refreshToken) {
+      res.status(403).json({
+        success: false,
+        message: "Forbidden",
+      })
+    }
+    const newAccessToken = jwt.sign({ userId }, process.env.MY_SECRET_TOKEN, {
+      expiresIn: '60s',
+    });
+    res.json({
+      success: true,
+      accessToken: newAccessToken,
+    })
+  },
+
   loginUser: async (req, res) => {
     console.log(req.body);
     const { username, password } = req.body;
@@ -34,13 +53,22 @@ const AuthController = {
         { userId: user._id },
         process.env.MY_SECRET_TOKEN,
         {
-          expiresIn: "15d",
+          expiresIn: "60s",
         }
       );
+      const refreshToken = jwt.sign(
+        { userId: user._id },
+        process.env.MY_REFRESH_TOKEN
+      )
+      const userInDb = await User.findById(user._id);
+      userInDb.refreshToken = refreshToken;
+      await userInDb.save();
+
       return res.status(200).json({
         success: true,
         message: "Congratulation!Login success ",
         accessToken,
+        refreshToken,
       });
     } catch (error) {
       console.log(error);
