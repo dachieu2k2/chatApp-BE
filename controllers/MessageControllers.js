@@ -19,6 +19,11 @@ const messageControllers = {
   editMessage: async (req, res) => {
     const messageId = req.params.idMessage;
     const message = await Message.findById(messageId);
+    if (req.userId !== message.userId) {
+      res.json({
+        message: "This message is not yours",
+      })
+    }
     message.content = req.body.content;
     await message.save();
     res.json(message);
@@ -26,7 +31,14 @@ const messageControllers = {
 
   deleteMessage: async (req, res) => {
     const messageId = req.params.idMessage;
-    await Message.findByIdAndDelete(messageId);
+    const message = await Message.findById(messageId);
+    if (req.userId !== message.userId) {
+      res.json({
+        message: "This message is not yours",
+      })
+    }
+    // await Message.findByIdAndDelete(messageId);
+    await message.remove();
     res.json({
       message: 'OK',
     });
