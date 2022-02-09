@@ -2,7 +2,7 @@ const { Message } = require('../models');
 
 const messageControllers = {
   getMessages: async (req, res) => {
-    const roomId = req.params.id;
+    const roomId = req.params.roomId;
     const messages = await Message.find({ roomId });
     res.json(messages);
   },

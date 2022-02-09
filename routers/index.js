@@ -7,9 +7,9 @@ const router = (app) => {
 
   app.use("/api/users/", AuthRouter);
 
-  app.use("/api/rooms/",verify ,RoomRouter);
+  app.use("/api/rooms/",verify, RoomRouter);
 
-  app.use("/api/messages/", MessageRouter);
+  app.use("/api/messages/",verify, MessageRouter);
 
 }
 
