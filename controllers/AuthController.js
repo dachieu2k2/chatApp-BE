@@ -5,11 +5,11 @@ const User = require("../models/User");
 const AuthController = {
   getUser: async (req, res) => {
     const userId = req.userId;
-    const user = await User.findById(userId).select('-password');
+    const user = await User.findById(userId).select("-password");
     res.json({
       success: true,
-      info: user
-    })
+      info: user,
+    });
   },
 
   refresh: async (req, res) => {
@@ -20,15 +20,15 @@ const AuthController = {
       res.status(403).json({
         success: false,
         message: "Forbidden",
-      })
+      });
     }
     const newAccessToken = jwt.sign({ userId }, process.env.MY_SECRET_TOKEN, {
-      expiresIn: '60s',
+      expiresIn: "60s",
     });
     res.json({
       success: true,
       accessToken: newAccessToken,
-    })
+    });
   },
 
   loginUser: async (req, res) => {
@@ -68,7 +68,7 @@ const AuthController = {
       const refreshToken = jwt.sign(
         { userId: user._id },
         process.env.MY_REFRESH_TOKEN
-      )
+      );
       const userInDb = await User.findById(user._id);
       userInDb.refreshToken = refreshToken;
       await userInDb.save();
@@ -119,7 +119,7 @@ const AuthController = {
         { userId: NewUser._id },
         process.env.MY_SECRET_TOKEN,
         {
-          expiresIn: "15d",
+          expiresIn: "60s",
         }
       );
       return res.json({
