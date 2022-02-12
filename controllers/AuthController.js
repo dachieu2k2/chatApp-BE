@@ -62,7 +62,7 @@ const AuthController = {
         { userId: user._id },
         process.env.MY_SECRET_TOKEN,
         {
-          expiresIn: "60s",
+          expiresIn: "60d",
         }
       );
       const refreshToken = jwt.sign(
@@ -119,7 +119,7 @@ const AuthController = {
         { userId: NewUser._id },
         process.env.MY_SECRET_TOKEN,
         {
-          expiresIn: "60s",
+          expiresIn: "60d",
         }
       );
       return res.json({
