@@ -1,9 +1,9 @@
-const { Room, Bind } = require("../models");
+const { Room, Bind, User } = require("../models");
 
 const roomControllers = {
   getRooms: async (req, res) => {
     const userId = req.userId;
-    const roomIds = await Bind.find({ userId }, 'roomId');
+    const roomIds = await Bind.find({ userId }, "roomId");
     console.log(roomIds);
     const rooms = roomIds.map(async ({ roomId }) => {
       const room = await Room.findById(roomId);
@@ -13,13 +13,20 @@ const roomControllers = {
   },
 
   createRoom: async (req, res) => {
-    const room = new Room(req.body);
+    const { username } = req.body;
+    const room = new Room({ name: req.body.name });
     await room.save();
     const bind = new Bind({
       roomId: room._id,
       userId: req.userId,
     });
+    const User2 = await User.findOne({ username: username });
+    const bind2 = new Bind({
+      roomId: room._id,
+      userId: User2._id,
+    });
     await bind.save();
+    await bind2.save();
     res.json(room);
   },
 
@@ -37,8 +44,8 @@ const roomControllers = {
     await Bind.findOneAndDelete({ roomId, userId });
     res.json({
       message: "OK",
-    })
-  }
-}
+    });
+  },
+};
 
 module.exports = roomControllers;
