@@ -20,13 +20,13 @@ const roomControllers = {
       roomId: room._id,
       userId: req.userId,
     });
-    const User2 = await User.findOne({ username: username });
-    const bind2 = new Bind({
+    const friend = await User.findOne({ username: username });
+    const bindFriend = new Bind({
       roomId: room._id,
-      userId: User2._id,
+      userId: friend._id,
     });
     await bind.save();
-    await bind2.save();
+    await bindFriend.save();
     res.json(room);
   },
 
