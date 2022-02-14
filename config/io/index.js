@@ -21,11 +21,12 @@ const connect = (app) => {
 
     socket.on("create room", ({ username, ...rest }) => {
       User.findOne({ username }).then((user) => {
-        socket.broadcast.emit("update room", user._id, rest);
+        io.emit("update room", user._id, rest);
       });
     });
+
     socket.on("create message", ({ roomId, ...action }) => {
-      socket.to(roomId).emit("update message", action);
+      io.to(roomId).emit("update message", action);
     });
 
     io.on("disconnect", () => {
