@@ -19,7 +19,6 @@ const messageControllers = {
         }
       }
     });
-    console.log(messages);
     res.json(await Promise.all(messages));
   },
 
