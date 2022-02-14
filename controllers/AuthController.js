@@ -85,7 +85,7 @@ const AuthController = {
     }
   },
   registerUser: async (req, res) => {
-    const { username, password, email } = req.body;
+    const { username, password, email, avatar } = req.body;
     if (!username || !password || !email) {
       return res.json({
         success: false,
@@ -110,6 +110,7 @@ const AuthController = {
         username,
         password: hashPassword,
         email,
+        avatar
       });
 
       await NewUser.save();
