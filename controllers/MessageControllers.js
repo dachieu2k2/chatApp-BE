@@ -7,11 +7,13 @@ const messageControllers = {
     messages = messages.map(async message => {
       const user = await User.findById(message.userId).select("-password");
       const { username, email, avatar } = user;
-      const { userId, content, roomId } = message;
+      const { _id, userId, content, roomId, createdAt } = message;
       return {
+        _id,
         userId,
         content,
         roomId,
+        createdAt,
         user: {
           username,
           email,

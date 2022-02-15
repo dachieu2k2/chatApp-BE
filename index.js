@@ -10,7 +10,7 @@ const io = require("./config/io");
 db.connect();
 
 const app = express();
-app.use(express.json());
+app.use(express.json({limit: 2097152}));
 app.use(cors());
 // app.use(morgan("combined"));
 

@@ -1,36 +1,51 @@
-const { Server } = require("socket.io");
-const { User } = require("../../models");
-const http = require("http");
+const { Server } = require('socket.io');
+const { User } = require('../../models');
+const http = require('http');
 
 const connect = (app) => {
   const server = http.createServer(app);
   const io = new Server(server);
 
-  io.on("connection", (socket) => {
-    console.log("Connected ", socket.id);
+  io.on('connection', (socket) => {
+    console.log('Connected ', socket.id);
 
-    socket.on("leave room", ({ roomId }) => {
+    socket.on('leave room', ({ roomId }) => {
       socket.leave(roomId);
       console.log(`${socket.id} leave room ${roomId}`);
     });
 
-    socket.on("join room", ({ roomId }) => {
+    socket.on('join room', ({ roomId }) => {
       socket.join(roomId);
       console.log(`${socket.id} join room ${roomId}`);
     });
 
-    socket.on("create room", ({ username, ...rest }) => {
+    socket.on('create room', ({ username, ...action }) => {
       User.findOne({ username }).then((user) => {
-        io.emit("update room", user._id, rest);
+        io.emit('update room', user._id, action);
       });
     });
 
-    socket.on("create message", ({ roomId, ...action }) => {
-      io.to(roomId).emit("update message", action);
+    socket.on('create message', ({ roomId, ...action }) => {
+      User.findById(action.payload.userId)
+        .select('-password')
+        .then((user) => {
+          const { username, email, avatar } = user;
+          io.to(roomId).emit('update message', {
+            ...action,
+            payload: {
+              ...action.payload,
+              user: {
+                username,
+                email,
+                avatar,
+              },
+            },
+          });
+        });
     });
 
-    io.on("disconnect", () => {
-      console.log("Disconnect ", socket.id);
+    io.on('disconnect', () => {
+      console.log('Disconnect ', socket.id);
     });
   });
 
