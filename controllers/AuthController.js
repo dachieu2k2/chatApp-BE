@@ -38,7 +38,7 @@ const AuthController = {
     if (!username || !password) {
       return res.json({
         success: false,
-        message: "sign the username or password",
+        message: "Sign the username or password",
       });
     }
     try {
@@ -75,7 +75,7 @@ const AuthController = {
 
       return res.status(200).json({
         success: true,
-        message: "Congratulation!Login success ",
+        message: "Congratulation! Login success ",
         accessToken,
         refreshToken,
       });
@@ -89,7 +89,7 @@ const AuthController = {
     if (!username || !password || !email) {
       return res.json({
         success: false,
-        message: "sign the username, password or email",
+        message: "Sign the username, password and email",
       });
     }
     try {
@@ -97,7 +97,7 @@ const AuthController = {
       if (FoundUser) {
         return res.json({
           success: false,
-          message: "please choose another name",
+          message: "Please choose another name",
         });
       }
       let hashPassword;
