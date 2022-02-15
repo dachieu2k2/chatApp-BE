@@ -53,17 +53,17 @@ const roomControllers = {
   invite: async (req, res) => {
     const { friendNameList, roomId } = req.body;
     const room = await Room.findById(roomId);
-    
-    friendNameList.forEach(async friendName => {
-      const friend = await User.findOne({username: friendName});
+
+    friendNameList.forEach(async (friendName) => {
+      const friend = await User.findOne({ username: friendName });
       const friendBind = new Bind({
         roomId,
         userId: friend._id,
-      })
+      });
       await friendBind.save();
-    })
+    });
     res.json(room);
-  }
+  },
 };
 
 module.exports = roomControllers;

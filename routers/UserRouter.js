@@ -1,10 +1,10 @@
-const express = require('express')
-const { userControllers } = require('../controllers')
+const express = require("express");
+const { userControllers } = require("../controllers");
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(userControllers.getAllUserName)
+router.route("/filter").post(userControllers.getAllUserNameFilter);
 
-module.exports = router
+router.route("/").get(userControllers.getAllUserName);
+
+module.exports = router;
