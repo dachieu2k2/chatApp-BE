@@ -13,20 +13,23 @@ const roomControllers = {
   },
 
   createRoom: async (req, res) => {
-    const { username } = req.body;
+    const { friendNameList } = req.body;
     const room = new Room({ name: req.body.name });
     await room.save();
     const bind = new Bind({
       roomId: room._id,
       userId: req.userId,
     });
-    const friend = await User.findOne({ username: username });
-    const bindFriend = new Bind({
-      roomId: room._id,
-      userId: friend._id,
-    });
     await bind.save();
-    await bindFriend.save();
+    friendNameList.forEach(async (friendName) => {
+      const friend = await User.findOne({ username: friendName });
+      const bindFriend = new Bind({
+        roomId: room._id,
+        userId: friend._id,
+      });
+      await bindFriend.save();
+    });
+
     res.json(room);
   },
 
