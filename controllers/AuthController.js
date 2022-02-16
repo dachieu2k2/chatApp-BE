@@ -38,7 +38,7 @@ const AuthController = {
     if (!username || !password) {
       return res.json({
         success: false,
-        message: "sign the username or password",
+        message: "Sign the username or password",
       });
     }
     try {
@@ -62,7 +62,7 @@ const AuthController = {
         { userId: user._id },
         process.env.MY_SECRET_TOKEN,
         {
-          expiresIn: "60s",
+          expiresIn: "60d",
         }
       );
       const refreshToken = jwt.sign(
@@ -75,7 +75,7 @@ const AuthController = {
 
       return res.status(200).json({
         success: true,
-        message: "Congratulation!Login success ",
+        message: "Congratulation! Login success ",
         accessToken,
         refreshToken,
       });
@@ -85,11 +85,11 @@ const AuthController = {
     }
   },
   registerUser: async (req, res) => {
-    const { username, password, email } = req.body;
+    const { username, password, email, avatar } = req.body;
     if (!username || !password || !email) {
       return res.json({
         success: false,
-        message: "sign the username, password or email",
+        message: "Sign the username, password and email",
       });
     }
     try {
@@ -97,7 +97,7 @@ const AuthController = {
       if (FoundUser) {
         return res.json({
           success: false,
-          message: "please choose another name",
+          message: "Please choose another name",
         });
       }
       let hashPassword;
@@ -110,6 +110,7 @@ const AuthController = {
         username,
         password: hashPassword,
         email,
+        avatar
       });
 
       await NewUser.save();
@@ -119,7 +120,7 @@ const AuthController = {
         { userId: NewUser._id },
         process.env.MY_SECRET_TOKEN,
         {
-          expiresIn: "60s",
+          expiresIn: "60d",
         }
       );
       return res.json({

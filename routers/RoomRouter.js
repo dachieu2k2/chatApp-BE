@@ -6,6 +6,7 @@ const router = express.Router();
 router.route("/").get(roomControllers.getRooms);
 
 router.route("/create").post(roomControllers.createRoom);
+router.route("/invite").post(roomControllers.invite);
 
 router
   .route("/:id")

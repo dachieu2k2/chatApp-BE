@@ -1,10 +1,27 @@
-const { Message } = require('../models');
+const { Message, User } = require('../models');
 
 const messageControllers = {
   getMessages: async (req, res) => {
     const roomId = req.params.roomId;
-    const messages = await Message.find({ roomId });
-    res.json(messages);
+    let messages = await Message.find({ roomId });
+    messages = messages.map(async message => {
+      const user = await User.findById(message.userId).select("-password");
+      const { username, email, avatar } = user;
+      const { _id, userId, content, roomId, createdAt } = message;
+      return {
+        _id,
+        userId,
+        content,
+        roomId,
+        createdAt,
+        user: {
+          username,
+          email,
+          avatar
+        }
+      }
+    });
+    res.json(await Promise.all(messages));
   },
 
   createMessage: async (req, res) => {

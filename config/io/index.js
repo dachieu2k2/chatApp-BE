@@ -19,13 +19,34 @@ const connect = (app) => {
       console.log(`${socket.id} join room ${roomId}`);
     });
 
-    socket.on("create room", ({ username, ...rest }) => {
-      User.findOne({ username }).then((user) => {
-        socket.broadcast.emit("update room", user._id, rest);
+    socket.on("create room", ({ friendNameList, ...action }) => {
+      const allFriendIdPromise = friendNameList.map(async (friendName) => {
+        const user = await User.findOne({ username: friendName });
+        return user._id;
+      });
+
+      Promise.all(allFriendIdPromise).then((allFriendId) => {
+        socket.broadcast.emit("update room", allFriendId, action);
       });
     });
+
     socket.on("create message", ({ roomId, ...action }) => {
-      socket.to(roomId).emit("update message", action);
+      User.findById(action.payload.userId)
+        .select("-password")
+        .then((user) => {
+          const { username, email, avatar } = user;
+          io.to(roomId).emit("update message", {
+            ...action,
+            payload: {
+              ...action.payload,
+              user: {
+                username,
+                email,
+                avatar,
+              },
+            },
+          });
+        });
     });
 
     io.on("disconnect", () => {
