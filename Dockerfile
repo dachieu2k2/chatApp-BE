@@ -1,9 +1,11 @@
 FROM node:14.19.0
 
-COPY . /app
+COPY package* /app/
 
 WORKDIR /app
 
-RUN npm i
+RUN npm install
+
+COPY . /app
 
 CMD npm start
