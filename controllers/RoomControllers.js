@@ -36,7 +36,9 @@ const roomControllers = {
   editRoom: async (req, res) => {
     const roomId = req.params.id;
     const room = await Room.findById(roomId);
-    room.name = req.body.name;
+    Object.keys(req.body).forEach(key => {
+      room[key] = req.body[key]
+    })
     await room.save();
     res.json(room);
   },

@@ -8,6 +8,10 @@ const RoomSchema = new Schema(
       type: String,
       required: true,
     },
+    newestMessage: {
+      type: Object,
+      default: {}
+    }
   },
   {
     timestamps: true,
