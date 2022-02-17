@@ -1,5 +1,5 @@
 const { Server } = require("socket.io");
-const { User } = require("../../models");
+const { User, Bind } = require("../../models");
 const http = require("http");
 
 const connect = (app) => {
@@ -48,6 +48,25 @@ const connect = (app) => {
           });
         });
     });
+
+    socket.on("update newest message", ({ roomId, ...action }) => {
+      Bind.find({ roomId }).then(res => {
+        const userIds = res.map(item => item.userId);
+        User.findById(action.payload.userId)
+          .select("username")
+          .then(user => {
+            io.emit("update room", userIds,{
+              ...action,
+              payload: {
+                ...action.payload,
+                user: {
+                  username: user.username
+                }
+              }
+            })
+          })
+      })
+    })
 
     io.on("disconnect", () => {
       console.log("Disconnect ", socket.id);

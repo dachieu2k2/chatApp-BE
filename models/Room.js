@@ -10,7 +10,7 @@ const RoomSchema = new Schema(
     },
     newestMessage: {
       type: Object,
-      default: {}
+      default: null,
     }
   },
   {

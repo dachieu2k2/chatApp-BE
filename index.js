@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 const express = require("express");
-const morgan = require("morgan");
+// const morgan = require("morgan");
 const cors = require("cors");
 
 const router = require("./routers");
@@ -16,7 +16,7 @@ app.use(express.json({limit: 2097152}));
 app.use(cors({
   origin: '*'
 }));
-app.use(morgan("combined"));
+// app.use(morgan("combined"));
 
 router(app);
 

@@ -7,13 +7,13 @@ const userControllers = {
   },
   getAllUserNameFilter: async (req, res) => {
     const { roomId } = req.body;
-    console.log(roomId);
+    // console.log(roomId);
 
     const userIds = await Bind.find({ roomId }).select("userId");
-    console.log(userIds);
+    // console.log(userIds);
     const usernamesPromise = userIds.map(async ({ userId }) => {
       const username = await User.findById(userId).select("username");
-      console.log(username);
+      // console.log(username);
 
       return username;
     });
