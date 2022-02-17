@@ -26,7 +26,7 @@ const connect = (app) => {
       });
 
       Promise.all(allFriendIdPromise).then((allFriendId) => {
-        socket.broadcast.emit("update room", allFriendId, action);
+        io.emit("update room", allFriendId, action);
       });
     });
 
