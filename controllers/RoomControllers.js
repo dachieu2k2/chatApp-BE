@@ -35,9 +35,9 @@ const roomControllers = {
   editRoom: async (req, res) => {
     const roomId = req.params.id;
     const room = await Room.findById(roomId);
-    Object.keys(req.body).forEach(key => {
-      room[key] = req.body[key]
-    })
+    Object.keys(req.body).forEach((key) => {
+      room[key] = req.body[key];
+    });
     await room.save();
     res.json(room);
   },
@@ -45,10 +45,8 @@ const roomControllers = {
   deleteRoom: async (req, res) => {
     const roomId = req.params.id;
     const userId = req.userId;
-    await Bind.findOneAndDelete({ roomId, userId });
-    res.json({
-      message: "OK",
-    });
+    const roomDeleted = await Bind.findOneAndDelete({ roomId, userId });
+    res.json(roomDeleted);
   },
 
   invite: async (req, res) => {
