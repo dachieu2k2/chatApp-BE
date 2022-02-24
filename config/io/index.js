@@ -1,5 +1,5 @@
 const { Server } = require("socket.io");
-const { User } = require("../../models");
+const { User, Bind } = require("../../models");
 const http = require("http");
 
 const connect = (app) => {
@@ -26,7 +26,7 @@ const connect = (app) => {
       });
 
       Promise.all(allFriendIdPromise).then((allFriendId) => {
-        socket.broadcast.emit("update room", allFriendId, action);
+        io.emit("update room", allFriendId, action);
       });
     });
 
@@ -47,6 +47,43 @@ const connect = (app) => {
             },
           });
         });
+    });
+    socket.on("delete message", ({ roomId, ...action }) => {
+      User.findById(action.payload.userId)
+        .select("-password")
+        .then((user) => {
+          const { username, email, avatar } = user;
+          io.to(roomId).emit("update message", {
+            ...action,
+            payload: {
+              ...action.payload,
+              user: {
+                username,
+                email,
+                avatar,
+              },
+            },
+          });
+        });
+    });
+
+    socket.on("update newest message", ({ roomId, ...action }) => {
+      Bind.find({ roomId }).then((res) => {
+        const userIds = res.map((item) => item.userId);
+        User.findById(action.payload.userId)
+          .select("username")
+          .then((user) => {
+            io.emit("update room", userIds, {
+              ...action,
+              payload: {
+                ...action.payload,
+                user: {
+                  username: user.username,
+                },
+              },
+            });
+          });
+      });
     });
 
     io.on("disconnect", () => {

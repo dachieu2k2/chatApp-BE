@@ -1,4 +1,4 @@
-require("dotenv").config();
+const dotenv = require("dotenv");
 const express = require("express");
 // const morgan = require("morgan");
 const cors = require("cors");
@@ -7,11 +7,15 @@ const router = require("./routers");
 const db = require("./config/db");
 const io = require("./config/io");
 
+dotenv.config();
+
 db.connect();
 
 const app = express();
 app.use(express.json({limit: 2097152}));
-app.use(cors());
+app.use(cors({
+  origin: '*'
+}));
 // app.use(morgan("combined"));
 
 router(app);
