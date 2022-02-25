@@ -1,11 +1,11 @@
-const dotenv = require("dotenv");
-const express = require("express");
-// const morgan = require("morgan");
-const cors = require("cors");
+import dotenv from "dotenv";
+import express from "express";
+// import morgan from "morgan";
+import cors from "cors";
 
-const router = require("./routers");
-const db = require("./config/db");
-const io = require("./config/io");
+import router from "./routers";
+import * as db from "./config/db";
+import * as io from "./config/io";
 
 dotenv.config();
 

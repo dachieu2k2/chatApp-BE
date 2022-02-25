@@ -1,6 +1,6 @@
-const express = require("express");
-const verify = require("../middlewares/auth");
-const { roomControllers } = require("../controllers");
+import express from "express";
+import verify from "../middlewares/auth";
+import { roomControllers } from "../controllers";
 
 const router = express.Router();
 
@@ -14,4 +14,4 @@ router
   .patch(verify, roomControllers.editRoom)
   .delete(verify, roomControllers.deleteRoom);
 
-module.exports = router;
+export default router;

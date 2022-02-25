@@ -1,8 +1,9 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const User = require("../models/User");
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import User from "../models/User";
+import { ControllerObj, SignData } from ".";
 
-const AuthController = {
+const AuthController: ControllerObj = {
   getUser: async (req, res) => {
     const userId = req.userId;
     const user = await User.findById(userId).select("-password");
@@ -16,19 +17,25 @@ const AuthController = {
     const refreshToken = req.body.token;
     const userId = req.userId;
     const user = await User.findById(userId);
-    if (user.refreshToken !== refreshToken) {
-      res.status(403).json({
-        success: false,
-        message: "Forbidden",
+    if (user) {
+      if (user.refreshToken !== refreshToken) {
+        res.status(403).json({
+          success: false,
+          message: "Forbidden",
+        });
+      }
+      const newAccessToken = jwt.sign({ userId }, process.env.MY_SECRET_TOKEN as jwt.Secret, {
+        expiresIn: "60d",
+      });
+      res.json({
+        success: true,
+        accessToken: newAccessToken,
       });
     }
-    const newAccessToken = jwt.sign({ userId }, process.env.MY_SECRET_TOKEN, {
-      expiresIn: "60d",
-    });
     res.json({
-      success: true,
-      accessToken: newAccessToken,
-    });
+      success: false,
+      message: 'User not found'
+    })
   },
 
   loginUser: async (req, res) => {
@@ -59,20 +66,21 @@ const AuthController = {
         });
       }
       const accessToken = jwt.sign(
-        { userId: user._id },
-        process.env.MY_SECRET_TOKEN,
+        { userId: user._id } as SignData,
+        process.env.MY_SECRET_TOKEN as jwt.Secret,
         {
           expiresIn: "60d",
         }
       );
       const refreshToken = jwt.sign(
-        { userId: user._id },
-        process.env.MY_REFRESH_TOKEN
+        { userId: user._id } as SignData,
+        process.env.MY_REFRESH_TOKEN as jwt.Secret
       );
       const userInDb = await User.findById(user._id);
-      userInDb.refreshToken = refreshToken;
-      await userInDb.save();
-
+      if (userInDb) {
+        userInDb.refreshToken = refreshToken;
+        await userInDb.save();
+      }
       return res.status(200).json({
         success: true,
         message: "Congratulation! Login success ",
@@ -127,7 +135,7 @@ const AuthController = {
 
       let hashPassword;
       await bcrypt
-        .hash(password, parseInt(process.env.saltRounds))
+        .hash(password, parseInt(process.env.saltRounds ?? '10'))
         .then((hash) => {
           hashPassword = hash;
         });
@@ -142,8 +150,8 @@ const AuthController = {
 
       //   console.log(process.env.MY_SECRET_TOKEN, NewUser._id);
       const accessToken = jwt.sign(
-        { userId: NewUser._id },
-        process.env.MY_SECRET_TOKEN,
+        { userId: NewUser._id } as SignData,
+        process.env.MY_SECRET_TOKEN as jwt.Secret,
         {
           expiresIn: "60d",
         }
@@ -160,4 +168,4 @@ const AuthController = {
   },
 };
 
-module.exports = AuthController;
+export default AuthController;

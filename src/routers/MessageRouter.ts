@@ -1,9 +1,9 @@
-const express = require("express");
-const verify = require("../middlewares/auth");
+import express from "express";
+import verify from "../middlewares/auth";
 
 const router = express.Router();
 
-const { messageControllers } = require("../controllers");
+import { messageControllers } from "../controllers";
 
 router.route("/:roomId").get(verify, messageControllers.getMessages);
 
@@ -14,4 +14,4 @@ router
   .patch(verify, messageControllers.editMessage)
   .delete(verify, messageControllers.deleteMessage);
 
-module.exports = router;
+export default router;

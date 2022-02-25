@@ -1,8 +1,9 @@
-const { Server } = require("socket.io");
-const { User, Bind } = require("../../models");
-const http = require("http");
+import express from 'express';
+import { Server } from "socket.io";
+import { User, Bind } from "../../models";
+import http from "http";
 
-const connect = (app) => {
+const connect = (app: ReturnType<typeof express>) => {
   const server = http.createServer(app);
   const io = new Server(server);
 
@@ -20,9 +21,11 @@ const connect = (app) => {
     });
 
     socket.on("create room", ({ friendNameList, ...action }) => {
-      const allFriendIdPromise = friendNameList.map(async (friendName) => {
+      const allFriendIdPromise = friendNameList.map(async (friendName: string) => {
         const user = await User.findOne({ username: friendName });
-        return user._id;
+        if (user) {
+          return user._id;
+        }
       });
 
       Promise.all(allFriendIdPromise).then((allFriendId) => {
@@ -32,36 +35,26 @@ const connect = (app) => {
 
     socket.on("create message", ({ roomId, ...action }) => {
       User.findById(action.payload.userId)
-        .select("-password")
+        .select("username email avatar")
         .then((user) => {
-          const { username, email, avatar } = user;
           io.to(roomId).emit("update message", {
             ...action,
             payload: {
               ...action.payload,
-              user: {
-                username,
-                email,
-                avatar,
-              },
+              user: user?.toObject(),
             },
           });
         });
     });
     socket.on("delete message", ({ roomId, ...action }) => {
       User.findById(action.payload.userId)
-        .select("-password")
+        .select("username email avatar")
         .then((user) => {
-          const { username, email, avatar } = user;
           io.to(roomId).emit("update message", {
             ...action,
             payload: {
               ...action.payload,
-              user: {
-                username,
-                email,
-                avatar,
-              },
+              user: user?.toObject(),
             },
           });
         });
@@ -78,7 +71,7 @@ const connect = (app) => {
               payload: {
                 ...action.payload,
                 user: {
-                  username: user.username,
+                  username: user?.username,
                 },
               },
             });
@@ -94,6 +87,6 @@ const connect = (app) => {
   return server;
 };
 
-module.exports = {
-  connect,
-};
+export {
+  connect
+}
