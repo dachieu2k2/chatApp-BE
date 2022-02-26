@@ -1,8 +1,9 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { I_Bind, Timestamps } from ".";
 
 const Schema = mongoose.Schema;
 
-const BindSchema = new Schema({
+const BindSchema = new Schema<I_Bind & Timestamps>({
   roomId: {
     type: String,
     required: true,
@@ -17,5 +18,4 @@ const BindSchema = new Schema({
 
 const Bind = mongoose.model('Bind', BindSchema);
 
-module.exports = Bind;
-
+export default Bind
