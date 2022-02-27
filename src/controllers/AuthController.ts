@@ -169,3 +169,4 @@ const AuthController: ControllerObj = {
 };
 
 export default AuthController;
+
