@@ -1,6 +1,8 @@
-const { User, Bind } = require("../models");
+import { ControllerObj } from ".";
 
-const userControllers = {
+import { User, Bind } from "../models";
+
+const userControllers: ControllerObj = {
   getAllUserName: async (_req, res) => {
     const usernames = await User.find({}).select("username");
     res.json(usernames);
@@ -21,4 +23,4 @@ const userControllers = {
   },
 };
 
-module.exports = userControllers;
+export default userControllers

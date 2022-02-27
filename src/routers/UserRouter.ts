@@ -1,6 +1,6 @@
-const express = require("express");
-const verify = require("../middlewares/auth");
-const { userControllers } = require("../controllers");
+import express from "express";
+import verify from "../middlewares/auth";
+import { userControllers } from "../controllers";
 
 const router = express.Router();
 
@@ -8,4 +8,4 @@ router.route("/filter").post(verify, userControllers.getAllUserNameFilter);
 
 router.route("/").get(verify, userControllers.getAllUserName);
 
-module.exports = router;
+export default router;

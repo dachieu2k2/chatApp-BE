@@ -1,8 +1,9 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { I_Message, Timestamps } from ".";
 
 const Schema = mongoose.Schema;
 
-const MessageSchema = new Schema({
+const MessageSchema = new Schema<I_Message & Timestamps>({
   content: {
     type: String,
     required: true,
@@ -21,5 +22,8 @@ const MessageSchema = new Schema({
 
 const Message = mongoose.model('Message', MessageSchema);
 
-module.exports = Message;
+export default Message
 
+export {
+  MessageSchema
+}
