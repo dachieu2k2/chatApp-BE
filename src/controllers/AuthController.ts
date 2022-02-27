@@ -19,7 +19,7 @@ const AuthController: ControllerObj = {
     const user = await User.findById(userId);
     if (user) {
       if (user.refreshToken !== refreshToken) {
-        res.status(403).json({
+        return res.status(403).json({
           success: false,
           message: "Forbidden",
         });
@@ -27,7 +27,7 @@ const AuthController: ControllerObj = {
       const newAccessToken = jwt.sign({ userId }, process.env.MY_SECRET_TOKEN as jwt.Secret, {
         expiresIn: "60d",
       });
-      res.json({
+      return res.json({
         success: true,
         accessToken: newAccessToken,
       });
